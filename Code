@@ -1,0 +1,31 @@
+Part 1 — Moderate Level (Questions 1–30)
+These questions focus on joining multiple tables, aggregation, filtering, subqueries, derived tables, CTEs, and introductory window functions.
+
+Section A — JOINs and business logic
+Q1. Find all customers who have at least one active account.
+select c.customer_id, c.name, c.city, c.state, a.status from customers as c
+  join accounts as a on a.customer_id = c.customer_id
+    where a.status = 'Active';
+
+Q2. Find customers who do not have any accounts.
+select c.customer_id, c.name, c.city, c.state from customers as c
+  left join accounts as a on a.customer_id = c.customer_id
+    where a.customer_id is null;
+
+Q3. Display each branch with its total number of accounts, including branches with zero accounts.
+select b.branch_id, b.branch_name, b.city, count(a.account_id) as TT_accounts from branches as b
+  left join accounts as a on a.branch_id = b.branch_id
+    group by b.branch_id, b.branch_name, b.city
+    order by b.branch_id, b.branch_name;
+
+Q4. Find customers who have both loans and accounts.
+select customer_id, name from customers where customer_id in 
+	(select l.customer_id from Loans as l
+		where l.customer_id in
+		(select a.customer_id from Accounts as a
+			where a.customer_id = l.customer_id));
+
+Q5. Find all accounts with their customer name and branch name.
+select a.account_id, c.name, b.branch_name, a.account_type from Accounts as a
+  join Customers as c on c.customer_id = a.customer_id
+  join Branches as b on b.branch_id = a.branch_id;
